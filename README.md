@@ -9,6 +9,7 @@
 [![Java](https://img.shields.io/badge/Java-17+-orange?style=flat-square&logo=openjdk)](https://openjdk.org/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/mongenscave/timesapi)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/mongen-s-cave/mc-timesapi/badge)](https://www.codefactor.io/repository/github/mongen-s-cave/mc-timesapi)
 
 ---
 
