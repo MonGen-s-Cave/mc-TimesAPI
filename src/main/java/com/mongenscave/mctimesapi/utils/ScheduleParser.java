@@ -34,7 +34,9 @@ public class ScheduleParser {
         else if (scheduleString.startsWith("WEEKDAYS")) config.setType(ScheduleType.WEEKDAYS);
         else if (scheduleString.startsWith("WEEKENDS")) config.setType(ScheduleType.WEEKENDS);
         else if (scheduleString.contains("EVERY") && scheduleString.contains("@")) parseWeeklySchedule(scheduleString, config);
-        else if (scheduleString.contains("EVERY") && (scheduleString.contains("ST") || scheduleString.contains("ND") || scheduleString.contains("TH"))) parseMonthlySchedule(scheduleString, config);
+        else if (scheduleString.contains("EVERY") && (scheduleString.contains("ST")
+                || scheduleString.contains("ND")
+                || scheduleString.contains("TH"))) parseMonthlySchedule(scheduleString, config);
         else if (INTERVAL_PATTERN.matcher(scheduleString).find()) parseIntervalSchedule(scheduleString, config);
         else if (scheduleString.startsWith("ONCE")) parseOnceSchedule(scheduleString, config);
         else if (scheduleString.contains("BETWEEN")) parseRangeSchedule(scheduleString, config);
@@ -69,6 +71,7 @@ public class ScheduleParser {
 
     private static void parseIntervalSchedule(String scheduleString, ScheduleConfig config) {
         Matcher matcher = INTERVAL_PATTERN.matcher(scheduleString);
+
         if (matcher.find()) {
             int value = Integer.parseInt(matcher.group(1));
             String unit = matcher.group(2);
@@ -85,6 +88,7 @@ public class ScheduleParser {
         config.setType(ScheduleType.ONCE);
 
         Matcher dateMatcher = DATE_PATTERN.matcher(scheduleString);
+
         if (dateMatcher.find()) {
             int year = Integer.parseInt(dateMatcher.group(1));
             int month = Integer.parseInt(dateMatcher.group(2));

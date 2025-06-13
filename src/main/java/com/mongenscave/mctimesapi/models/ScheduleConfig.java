@@ -10,8 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
-@Setter
 @Getter
+@Setter
 public class ScheduleConfig {
     private ScheduleType type;
     private LocalTime time;

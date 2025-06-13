@@ -36,8 +36,9 @@ public class AnnotationProcessor {
                 };
 
                 CompletableFuture<ScheduleTask> future = schedulerManager.scheduleTask(scheduleString, task, async);
-
-                future.thenAccept(scheduleTask -> {});
+                future.thenAccept(scheduleTask -> {
+                    // Task scheduled successfully
+                });
             }
         }
     }

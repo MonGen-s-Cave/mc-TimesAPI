@@ -80,7 +80,7 @@ dependencies {
 ### Basic Scheduling
 
 ```java
-import com.mongenscave.mctimesapi.api.TimesAPI;
+import com.mongenscave.mctimesapi.TimesAPI;
 
 public class MyPlugin extends JavaPlugin {
     

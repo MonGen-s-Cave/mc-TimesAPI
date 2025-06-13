@@ -1,12 +1,12 @@
 package com.mongenscave.mctimesapi.manager;
 
-import com.mongenscave.mctimesapi.McTimesAPI;
 import com.mongenscave.mctimesapi.identifiers.ScheduleType;
 import com.mongenscave.mctimesapi.math.TaskCalculator;
 import com.mongenscave.mctimesapi.models.ScheduleConfig;
 import com.mongenscave.mctimesapi.models.ScheduleTask;
 import com.mongenscave.mctimesapi.utils.ScheduleParser;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,17 +19,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class SchedulerManager {
-    private final McTimesAPI plugin;
+    private final Plugin plugin;
     private final ConcurrentHashMap<String, ScheduleTask> activeTasks;
     private final ScheduledExecutorService executorService;
     private final TaskCalculator taskCalculator;
     private final AtomicBoolean running = new AtomicBoolean(true);
 
-    public SchedulerManager(McTimesAPI plugin) {
+    public SchedulerManager(Plugin plugin) {
         this.plugin = plugin;
         this.activeTasks = new ConcurrentHashMap<>();
         this.executorService = Executors.newScheduledThreadPool(4, r -> {
-            Thread t = new Thread(r, "TimesAPI-Scheduler");
+            Thread t = new Thread(r, "TimesAPI-Scheduler-" + plugin.getName());
             t.setDaemon(true);
             return t;
         });
@@ -68,6 +68,7 @@ public class SchedulerManager {
 
     public boolean cancelTask(String taskId) {
         ScheduleTask task = activeTasks.remove(taskId);
+
         if (task != null) return task.cancel();
         return false;
     }

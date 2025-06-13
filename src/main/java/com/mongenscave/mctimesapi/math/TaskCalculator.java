@@ -47,9 +47,8 @@ public class TaskCalculator {
     private LocalDateTime calculateWeekends(@NotNull LocalDateTime now, LocalTime targetTime) {
         LocalDateTime target = now.toLocalDate().atTime(targetTime);
 
-        while (target.isBefore(now)
-                || target.equals(now)
-                || (target.getDayOfWeek() != DayOfWeek.SATURDAY && target.getDayOfWeek() != DayOfWeek.SUNDAY)) {
+        while (target.isBefore(now) || target.equals(now) ||
+                (target.getDayOfWeek() != DayOfWeek.SATURDAY && target.getDayOfWeek() != DayOfWeek.SUNDAY)) {
             target = target.plusDays(1);
         }
 
@@ -57,7 +56,9 @@ public class TaskCalculator {
     }
 
     private LocalDateTime calculateWeekly(LocalDateTime now, @NotNull ScheduleConfig config) {
-        if (config.getDaysOfWeek() == null || config.getDaysOfWeek().isEmpty()) return now.plusDays(1);
+        if (config.getDaysOfWeek() == null || config.getDaysOfWeek().isEmpty()) {
+            return now.plusDays(1);
+        }
 
         LocalTime targetTime = config.getTime() != null ? config.getTime() : LocalTime.now();
         LocalDateTime target = now.toLocalDate().atTime(targetTime);
