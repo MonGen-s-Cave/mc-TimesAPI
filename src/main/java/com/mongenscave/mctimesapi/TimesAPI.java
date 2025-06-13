@@ -4,33 +4,28 @@ import com.mongenscave.mctimesapi.manager.SchedulerManager;
 import com.mongenscave.mctimesapi.models.ScheduleTask;
 import com.mongenscave.mctimesapi.processor.AnnotationProcessor;
 import lombok.Getter;
-import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
- * TimesAPI - Standalone scheduling library for Bukkit/Paper plugins
+ * TimesAPI - Standalone scheduling library for any Java application
  * Usage:
- * 1. Create an instance: TimesAPI api = new TimesAPI(yourPlugin);
+ * 1. Create an instance: TimesAPI api = new TimesAPI();
  * 2. Schedule tasks: api.schedule("EVERYDAY @ 18:00", () -> { ... });
  * 3. Use annotations: api.registerScheduledClass(yourClassInstance);
  * 4. Shutdown when done: api.shutdown();
  */
 public class TimesAPI {
-    @Getter private final Plugin plugin;
     private final SchedulerManager schedulerManager;
     private final AnnotationProcessor annotationProcessor;
     @Getter private boolean initialized = false;
 
     /**
      * Create a new TimesAPI instance
-     *
-     * @param plugin Your plugin instance
      */
-    public TimesAPI(Plugin plugin) {
-        this.plugin = plugin;
-        this.schedulerManager = new SchedulerManager(plugin);
+    public TimesAPI() {
+        this.schedulerManager = new SchedulerManager();
         this.annotationProcessor = new AnnotationProcessor(schedulerManager);
         this.initialized = true;
     }
@@ -116,7 +111,7 @@ public class TimesAPI {
 
     /**
      * Shutdown the TimesAPI and clean up all resources
-     * Call this in your plugin's onDisable() method
+     * Call this when your application is shutting down
      */
     public void shutdown() {
         schedulerManager.shutdown();
@@ -127,6 +122,8 @@ public class TimesAPI {
      * Validate that the API is properly initialized
      */
     private void validateInitialization() {
-        if (!initialized) throw new IllegalStateException("TimesAPI is not properly initialized!");
+        if (!initialized) {
+            throw new IllegalStateException("TimesAPI is not properly initialized!");
+        }
     }
 }

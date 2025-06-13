@@ -37,13 +37,10 @@ public class ScheduleTask {
         lastExecution = LocalDateTime.now();
         executionCount.incrementAndGet();
 
-        if (async) taskFuture = CompletableFuture.runAsync(task);
-        else {
-            try {
-                task.run();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+        try {
+            task.run();
+        } catch (Exception exception) {
+            System.err.println("Error executing scheduled task '" + scheduleString + "': " + exception.getMessage());
         }
     }
 
@@ -53,6 +50,33 @@ public class ScheduleTask {
         return wasCancelled;
     }
 
-    public boolean isCancelled() { return cancelled.get(); }
-    public long getExecutionCount() { return executionCount.get(); }
+    public boolean isCancelled() {
+        return cancelled.get();
+    }
+
+    public long getExecutionCount() {
+        return executionCount.get();
+    }
+
+    /**
+     * Get a human-readable description of this task
+     */
+    public String getDescription() {
+        return String.format("Task[%s] - Schedule: %s, Async: %s, Executions: %d",
+                id.substring(0, 8), scheduleString, async, getExecutionCount());
+    }
+
+    /**
+     * Check if this task is due for execution
+     */
+    public boolean isDue() {
+        return nextExecution != null &&
+                !nextExecution.isAfter(LocalDateTime.now()) &&
+                !cancelled.get();
+    }
+
+    @Override
+    public String toString() {
+        return getDescription();
+    }
 }

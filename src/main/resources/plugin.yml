@@ -1,6 +1,6 @@
 name: mc-TimesAPI
 version: '1.0.0'
-main: com.mongenscave.mctimesapi.McTimesAPI
+main: com.mongenscave.mctimesapi.TimesAPI
 api-version: '1.18'
 authors: [ coma112 ]
 folia-supported: true

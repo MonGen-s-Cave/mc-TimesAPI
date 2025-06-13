@@ -5,8 +5,7 @@ import com.mongenscave.mctimesapi.math.TaskCalculator;
 import com.mongenscave.mctimesapi.models.ScheduleConfig;
 import com.mongenscave.mctimesapi.models.ScheduleTask;
 import com.mongenscave.mctimesapi.utils.ScheduleParser;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,17 +18,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class SchedulerManager {
-    private final Plugin plugin;
     private final ConcurrentHashMap<String, ScheduleTask> activeTasks;
     private final ScheduledExecutorService executorService;
+    private final ScheduledExecutorService asyncExecutorService;
     private final TaskCalculator taskCalculator;
     private final AtomicBoolean running = new AtomicBoolean(true);
 
-    public SchedulerManager(Plugin plugin) {
-        this.plugin = plugin;
+    public SchedulerManager() {
         this.activeTasks = new ConcurrentHashMap<>();
-        this.executorService = Executors.newScheduledThreadPool(4, r -> {
-            Thread t = new Thread(r, "TimesAPI-Scheduler-" + plugin.getName());
+        this.executorService = Executors.newScheduledThreadPool(2, r -> {
+            Thread t = new Thread(r, "TimesAPI-Scheduler-Main");
+            t.setDaemon(true);
+            return t;
+        });
+        this.asyncExecutorService = Executors.newScheduledThreadPool(4, r -> {
+            Thread t = new Thread(r, "TimesAPI-Async-Worker");
             t.setDaemon(true);
             return t;
         });
@@ -88,13 +91,17 @@ public class SchedulerManager {
                     .filter(task -> task.getNextExecution() != null)
                     .filter(task -> !task.getNextExecution().isAfter(now))
                     .forEach(task -> {
-                        if (task.isAsync()) CompletableFuture.runAsync(task::execute, executorService);
-                        else Bukkit.getScheduler().runTask(plugin, task::execute);
+                        try {
+                            if (task.isAsync()) CompletableFuture.runAsync(task::execute, asyncExecutorService);
+                            else task.execute();
 
-                        if (task.getConfig().getType() != ScheduleType.ONCE) {
-                            LocalDateTime nextExecution = taskCalculator.calculateNextExecution(task.getConfig());
-                            task.setNextExecution(nextExecution);
-                        } else activeTasks.remove(task.getId());
+                            if (task.getConfig().getType() != ScheduleType.ONCE) {
+                                LocalDateTime nextExecution = taskCalculator.calculateNextExecution(task.getConfig());
+                                task.setNextExecution(nextExecution);
+                            } else activeTasks.remove(task.getId());
+                        } catch (Exception exception) {
+                            System.err.println("Error executing scheduled task: " + exception.getMessage());
+                        }
                     });
 
         }, 0, 30, TimeUnit.SECONDS);
@@ -105,12 +112,21 @@ public class SchedulerManager {
 
         activeTasks.values().forEach(ScheduleTask::cancel);
         activeTasks.clear();
-        executorService.shutdown();
 
+        shutdownExecutorService(executorService, "Main Scheduler");
+        shutdownExecutorService(asyncExecutorService, "Async Worker");
+    }
+
+    private void shutdownExecutorService(@NotNull ScheduledExecutorService service, String name) {
+        service.shutdown();
         try {
-            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) executorService.shutdownNow();
+            if (!service.awaitTermination(5, TimeUnit.SECONDS)) {
+                System.out.println("Forcing shutdown of " + name + " executor service");
+                service.shutdownNow();
+                if (!service.awaitTermination(5, TimeUnit.SECONDS)) System.err.println("Failed to shutdown " + name + " executor service");
+            }
         } catch (InterruptedException exception) {
-            executorService.shutdownNow();
+            service.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }
