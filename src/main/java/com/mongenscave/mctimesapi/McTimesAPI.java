@@ -4,12 +4,11 @@ import com.mongenscave.mctimesapi.api.TimesAPI;
 import com.mongenscave.mctimesapi.manager.SchedulerManager;
 import com.mongenscave.mctimesapi.processor.AnnotationProcessor;
 import lombok.Getter;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * McTimesAPI - A powerful scheduling library for Bukkit/Paper plugins
+ * McTimesAPI - A powerful scheduling library for Bukkit/Paper plugins,
  * This class serves as the main entry point for the library
  */
 @SuppressWarnings("deprecation")

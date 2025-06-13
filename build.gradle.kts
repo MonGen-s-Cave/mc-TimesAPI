@@ -1,7 +1,5 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.2"
-    id("io.github.revxrsal.zapper") version "1.0.2"
     id("io.freefair.lombok") version "8.11"
 }
 
@@ -27,9 +25,7 @@ java {
     }
 }
 
-zapper {
-    libsFolder = "libs"
-    relocationPrefix = "com.mongenscave.mctimesapi"
-
-    repositories { includeProjectRepositories() }
+tasks.javadoc {
+    options.encoding = "UTF-8"
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
 }
