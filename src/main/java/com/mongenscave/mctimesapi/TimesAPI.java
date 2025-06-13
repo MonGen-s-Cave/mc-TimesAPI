@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public class TimesAPI {
     private final SchedulerManager schedulerManager;
     private final AnnotationProcessor annotationProcessor;
-    @Getter private boolean initialized = false;
+    @Getter private boolean initialized;
 
     /**
      * Create a new TimesAPI instance
@@ -122,8 +122,6 @@ public class TimesAPI {
      * Validate that the API is properly initialized
      */
     private void validateInitialization() {
-        if (!initialized) {
-            throw new IllegalStateException("TimesAPI is not properly initialized!");
-        }
+        if (!initialized) throw new IllegalStateException("TimesAPI is not properly initialized!");
     }
 }
