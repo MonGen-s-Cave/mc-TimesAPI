@@ -2,18 +2,19 @@
 
 <div align="center">
 
-![McTimesAPI Logo](https://img.shields.io/badge/McTimesAPI-v1.0.0-blue?style=for-the-badge&logo=minecraft)
+![TimesAPI Logo](https://img.shields.io/badge/TimesAPI-v1.0.0-blue?style=for-the-badge&logo=clock)
 
-**A powerful, modern scheduling library for Bukkit/Paper plugins**
+**A powerful, modern scheduling library for Java applications**
 
 [![Java](https://img.shields.io/badge/Java-17+-orange?style=flat-square&logo=openjdk)](https://openjdk.org/)
-[![Bukkit](https://img.shields.io/badge/Bukkit-1.20+-green?style=flat-square&logo=minecraft)](https://bukkit.org/)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/mongenscave/timesapi)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/mongenscave/mctimesapi)
 
 ---
 
 > **A powerful, lightweight, and intuitive task scheduling library for Java applications with natural language scheduling syntax.**
+
+</div>
 
 TimesAPI revolutionizes how you handle scheduled tasks in Java. Say goodbye to complex cron expressions and hello to human-readable scheduling strings like `"EVERYDAY @ 18:00"` or `"EVERY MON,WED,FRI @ 09:30"`.
 
@@ -38,20 +39,20 @@ Add TimesAPI to your project:
 ```xml
 <dependency>
     <groupId>com.mongenscave</groupId>
-    <artifactId>mctimesapi</artifactId>
+    <artifactId>timesapi</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
 
 **Gradle:**
 ```gradle
-implementation 'com.mongenscave:mctimesapi:1.0.0'
+implementation 'com.mongenscave:timesapi:1.0.0'
 ```
 
 ### Basic Usage
 
 ```java
-import com.mongenscave.mctimesapi.TimesAPI;
+import com.mongenscave.timesapi.TimesAPI;
 
 public class MyApplication {
     public static void main(String[] args) {
@@ -183,7 +184,7 @@ int activeCount = scheduler.getActiveTaskCount();
 For a more declarative approach, use annotations:
 
 ```java
-import com.mongenscave.mctimesapi.annotations.Schedule;
+import com.mongenscave.timesapi.annotations.Schedule;
 
 public class MyScheduledService {
     
@@ -248,18 +249,25 @@ TimesAPI
 
 ### Key Components
 
-- **TimesAPI**: Main entry point and public API
-- **SchedulerManager**: Manages task execution with thread pools
-- **ScheduleParser**: Converts natural language to schedule configurations
-- **TaskCalculator**: Calculates next execution times using temporal logic
-- **AnnotationProcessor**: Handles `@Schedule` annotated methods
+**TimesAPI**: Main entry point and public API
+
+**SchedulerManager**: Manages task execution with thread pools
+
+**ScheduleParser**: Converts natural language to schedule configurations
+
+**TaskCalculator**: Calculates next execution times using temporal logic
+
+**AnnotationProcessor**: Handles `@Schedule` annotated methods
 
 ## 📊 Performance Characteristics
 
-- **Memory Usage**: ~2MB baseline, scales with active tasks
-- **CPU Usage**: Minimal overhead, efficient task scheduling
-- **Thread Pools**: Configurable, with sensible defaults
-- **Scalability**: Tested with 10,000+ concurrent tasks
+**Memory Usage**: ~2MB baseline, scales with active tasks
+
+**CPU Usage**: Minimal overhead, efficient task scheduling
+
+**Thread Pools**: Configurable, with sensible defaults
+
+**Scalability**: Tested with 10,000+ concurrent tasks
 
 ## 🔄 Lifecycle Management
 
@@ -486,10 +494,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/mongenscave/mctimesapi/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/mongenscave/mctimesapi/discussions)
+- **Issues**: [GitHub Issues](https://github.com/mongenscave/timesapi/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/mongenscave/timesapi/discussions)
+
 ---
+
+<div align="center">
 
 **Made with ❤️ by MongensCave**
 
 *TimesAPI - Because scheduling shouldn't be complicated.*
+
+</div>
