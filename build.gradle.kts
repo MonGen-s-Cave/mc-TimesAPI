@@ -1,14 +1,24 @@
 plugins {
     id("java")
     id("io.freefair.lombok") version "8.11"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("maven-publish")
 }
 
 group = "com.mongenscave"
 version = "1.0.0"
 
 repositories {
-    mavenCentral()
+    maven {
+        name = "MonGens-Cave"
+        url = uri("https://repo.mongenscave.com/")
+        credentials {
+            username = project.findProperty("mongensUsername") as String
+            password = project.findProperty("mongensPassword") as String
+        }
+    }
 
+    mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://jitpack.io")
@@ -28,4 +38,43 @@ java {
 tasks.javadoc {
     options.encoding = "UTF-8"
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}
+
+val apiJar = tasks.register<Jar>("apiJar") {
+    archiveBaseName.set("mc-TimesAPI")
+    archiveClassifier.set("")
+    archiveVersion.set(project.version.toString())
+
+    from(sourceSets.main.get().output) {
+        include("com/mongenscave/mctimesapi/**")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("apiJar") {
+            artifact(apiJar.get()) {
+                classifier = null
+            }
+
+            groupId = "com.mongenscave"
+            artifactId = "mc-TimesAPI"
+            version = project.version.toString()
+        }
+    }
+
+    repositories {
+        maven {
+            name = "MonGens-Cave"
+            url = uri("https://repo.mongenscave.com/releases")
+            credentials {
+                username = project.findProperty("mongensUsername") as String
+                password = project.findProperty("mongensPassword") as String
+            }
+        }
+    }
+}
+
+tasks.register("deployApi") {
+    dependsOn("apiJar", "publishApiJarPublicationToMonGens-CaveRepository")
 }

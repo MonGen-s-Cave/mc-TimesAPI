@@ -37,16 +37,66 @@ Add TimesAPI to your project:
 
 **Maven:**
 ```xml
+<repositories>
+    <repository>
+        <id>mongenscave-releases</id>
+        <url>https://repo.mongenscave.com/releases</url>
+    </repository>
+</repositories>
+
+<dependencies>
 <dependency>
     <groupId>com.mongenscave</groupId>
-    <artifactId>timesapi</artifactId>
+    <artifactId>mc-TimesAPI</artifactId>
     <version>1.0.0</version>
 </dependency>
+</dependencies>
 ```
 
 **Gradle:**
 ```gradle
-implementation 'com.mongenscave:timesapi:1.0.0'
+repositories {
+    maven {
+        url "https://repo.mongenscave.com/releases"
+    }
+}
+
+dependencies {
+    implementation 'com.mongenscave:mc-TimesAPI:1.0.0'
+}
+```
+
+**⚠️ Important: Shadow JAR Required**
+
+TimesAPI requires proper shadowing to include all dependencies. Make sure to use the shadow plugin in your build:
+
+**Gradle Shadow Plugin:**
+```gradle
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    mergeServiceFiles()
+}
+```
+
+**Maven Shade Plugin:**
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.4.1</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
 ```
 
 ### Basic Usage
@@ -58,17 +108,17 @@ public class MyApplication {
     public static void main(String[] args) {
         // Create TimesAPI instance
         TimesAPI scheduler = new TimesAPI();
-        
+
         // Schedule a daily task
         scheduler.schedule("EVERYDAY @ 18:00", () -> {
             System.out.println("Daily backup started!");
         });
-        
+
         // Schedule a weekly task
         scheduler.schedule("EVERY MON,WED,FRI @ 09:30", () -> {
             System.out.println("Weekly report generation");
         });
-        
+
         // Don't forget to shutdown when your app closes
         Runtime.getRuntime().addShutdownHook(new Thread(scheduler::shutdown));
     }
@@ -152,8 +202,8 @@ scheduler.schedule("BETWEEN 09:00-17:00 EVERY HOUR", task);
 ```java
 // Schedule async task
 scheduler.scheduleAsync("EVERYDAY @ 02:00", () -> {
-    // This runs in a separate thread pool
-    performHeavyBackupOperation();
+// This runs in a separate thread pool
+performHeavyBackupOperation();
 });
 ```
 
@@ -162,14 +212,14 @@ scheduler.scheduleAsync("EVERYDAY @ 02:00", () -> {
 ```java
 // Schedule with callback
 CompletableFuture<ScheduleTask> future = scheduler.schedule("EVERYDAY @ 18:00", () -> {
-    System.out.println("Task executed!");
-});
+            System.out.println("Task executed!");
+        });
 
 // Get task information
 future.thenAccept(task -> {
-    System.out.println("Task ID: " + task.getId());
-    System.out.println("Next execution: " + task.getNextExecution());
-});
+        System.out.println("Task ID: " + task.getId());
+        System.out.println("Next execution: " + task.getNextExecution());
+        });
 
 // Cancel a task
 String taskId = future.get().getId();
@@ -187,23 +237,23 @@ For a more declarative approach, use annotations:
 import com.mongenscave.timesapi.annotations.Schedule;
 
 public class MyScheduledService {
-    
+
     @Schedule("EVERYDAY @ 08:00")
     public void dailyMorningTask() {
         System.out.println("Good morning! Starting daily tasks...");
     }
-    
+
     @Schedule(value = "EVERY MON @ 09:00", async = true)
     public void weeklyReport() {
         // Heavy operation runs asynchronously
         generateWeeklyReport();
     }
-    
+
     @Schedule("EVERY 30 MINUTES")
     public void healthCheck() {
         performHealthCheck();
     }
-    
+
     @Schedule("WEEKDAYS @ 17:00")
     public void endOfDayCleanup() {
         cleanupTempFiles();
@@ -221,12 +271,12 @@ Access task information during execution:
 
 ```java
 scheduler.schedule("EVERYDAY @ 18:00", (task) -> {
-    System.out.println("Execution #" + task.getExecutionCount());
-    System.out.println("Last run: " + task.getLastExecution());
-    System.out.println("Next run: " + task.getNextExecution());
-    
-    // Your actual task logic here
-    performBackup();
+        System.out.println("Execution #" + task.getExecutionCount());
+        System.out.println("Last run: " + task.getLastExecution());
+        System.out.println("Next run: " + task.getNextExecution());
+
+// Your actual task logic here
+performBackup();
 });
 ```
 
@@ -274,17 +324,17 @@ TimesAPI
 ```java
 public class ApplicationLifecycle {
     private TimesAPI scheduler;
-    
+
     public void startup() {
         scheduler = new TimesAPI();
-        
+
         // Schedule your tasks
         scheduler.schedule("EVERYDAY @ 18:00", this::dailyBackup);
-        
+
         // Register scheduled services
         scheduler.registerScheduledClass(new MyScheduledService());
     }
-    
+
     public void shutdown() {
         // Gracefully shutdown all tasks
         scheduler.shutdown();
@@ -311,13 +361,13 @@ TimesAPI provides robust error handling:
 
 ```java
 scheduler.schedule("EVERYDAY @ 18:00", () -> {
-    try {
-        riskyOperation();
+        try {
+riskyOperation();
     } catch (Exception e) {
         // Log error, task will continue to be scheduled
         logger.error("Task failed", e);
     }
-});
+            });
 ```
 
 ## 🔍 Monitoring & Debugging
@@ -330,11 +380,11 @@ CompletableFuture<ScheduleTask> future = scheduler.schedule("EVERYDAY @ 18:00", 
 ScheduleTask task = future.get();
 
 System.out.println("Task ID: " + task.getId());
-System.out.println("Schedule: " + task.getScheduleString());
-System.out.println("Created: " + task.getCreatedAt());
-System.out.println("Executions: " + task.getExecutionCount());
-System.out.println("Last run: " + task.getLastExecution());
-System.out.println("Next run: " + task.getNextExecution());
+        System.out.println("Schedule: " + task.getScheduleString());
+        System.out.println("Created: " + task.getCreatedAt());
+        System.out.println("Executions: " + task.getExecutionCount());
+        System.out.println("Last run: " + task.getLastExecution());
+        System.out.println("Next run: " + task.getNextExecution());
 ```
 
 ### System Status
@@ -358,7 +408,7 @@ public class WebTaskService {
     public void sessionCleanup() {
         cleanExpiredSessions();
     }
-    
+
     @Schedule("EVERYDAY @ 02:00")
     public void databaseMaintenance() {
         optimizeDatabase();
@@ -374,7 +424,7 @@ public class DataProcessor {
     public void processIncomingData() {
         processDataBatch();
     }
-    
+
     @Schedule("EVERYDAY @ 01:00")
     public void dailyReporting() {
         generateDailyReport();
@@ -389,7 +439,7 @@ public class SystemMonitor {
     public void healthCheck() {
         checkSystemHealth();
     }
-    
+
     @Schedule("WEEKDAYS @ 09:00")
     public void morningStatusReport() {
         sendStatusReport();
@@ -403,7 +453,7 @@ public class SystemMonitor {
 ```java
 // Always shutdown TimesAPI when your application closes
 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-    scheduler.shutdown();
+        scheduler.shutdown();
 }));
 ```
 
@@ -411,25 +461,25 @@ Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 ```java
 // Handle exceptions in your tasks
 scheduler.schedule("EVERYDAY @ 18:00", () -> {
-    try {
-        criticalOperation();
+        try {
+criticalOperation();
     } catch (Exception e) {
         logger.error("Critical operation failed", e);
-        // Implement retry logic or alerting
+// Implement retry logic or alerting
     }
-});
+            });
 ```
 
 ### Performance
 ```java
 // Use async for heavy operations
 scheduler.scheduleAsync("EVERY HOUR", () -> {
-    heavyDataProcessing();
+heavyDataProcessing();
 });
 
 // Keep sync tasks lightweight
-scheduler.schedule("EVERY 5 MINUTES", () -> {
-    quickHealthCheck();
+        scheduler.schedule("EVERY 5 MINUTES", () -> {
+quickHealthCheck();
 });
 ```
 
